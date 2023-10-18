@@ -22,7 +22,7 @@ const icon = (gender: Gender) => {
 
 interface StyleInterface {
     border: string;
-    'border-radius': string;
+    borderRadius: string;
     padding: string;
     margin: string;
 }
@@ -44,13 +44,9 @@ const PatientPage = ({diagnosis} : Props) => {
     if(id === undefined){ return <div>wrong id</div>;}
     if(patient === undefined){ return <div>No data</div>;}
 
-    
-
-
-
    const style: StyleInterface = {
     border: '1px solid',
-    'border-radius': '5px',
+    borderRadius: '5px',
     padding: '5px 20px 5px 5px',
     margin: '5px'
    };

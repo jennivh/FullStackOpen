@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Diagnosis, Entry, EntryWithoutId, HealthCheckRating, NewBaseEntry, Patient } from "../types";
+import {Entry, EntryWithoutId, HealthCheckRating, NewBaseEntry, Patient } from "../types";
 import patientService from "../services/patients";
 import axios from "axios";
 
@@ -13,9 +13,11 @@ const EntryForm = ({ patient, setPatient} : Props) => {
     const [description, setDescription] = useState('');
     const [specialist, setSpecialist] = useState('');
     const [employerName, setEmployerName] = useState('');
-    const [diagnosisCodes, setDiagnosisCodes] = useState<Diagnosis[]>([]);
+    //const [diagnosisCodes, setDiagnosisCodes] = useState<Diagnosis[]>([]);
     const [criteria, setCriteria] = useState('');
     const [rating , setRating] = useState('');
+    const [date, setDate] = useState('');
+    const [start, setStart] = useState('');
     
     
     const formatDate = (date: Date) => {
@@ -34,8 +36,7 @@ const EntryForm = ({ patient, setPatient} : Props) => {
         return formatDate(date);
     };
 
-    const [date, setDate] = useState(currentDate);
-    const [start, setStart] = useState(currentDate);
+  
     const [end, setEnd] = useState(currentDate);
     const [dischargeDate, setDischargeDate] = useState(currentDate);
 
@@ -43,7 +44,6 @@ const EntryForm = ({ patient, setPatient} : Props) => {
         event.preventDefault();
         try{
         //const diagnosis = diagnosisCodes?.map( d => d.code);
-        //const codes = !diagnosis || diagnosis.length < 1 ? undefined : diagnosis;
         const entry: NewBaseEntry = {date, description, specialist};
         switch(type){
             case 'OccupationalHealthcare':
@@ -69,7 +69,7 @@ const EntryForm = ({ patient, setPatient} : Props) => {
                 const nE : EntryWithoutId = {
                     ...entry,
                     type,
-                    healthCheckRating: rating as unknown as HealthCheckRating
+                    healthCheckRating: Number(rating) as HealthCheckRating
                 };
                 const newEntr: Entry =  await patientService.createEntry(nE, patient.id);
                 setPatient({ ...patient, entries: patient.entries.concat(newEntr)});
@@ -80,11 +80,11 @@ const EntryForm = ({ patient, setPatient} : Props) => {
         setDescription('');
         setEmployerName('');
         setSpecialist('');
-        setEnd(currentDate);
-        setStart(currentDate);
+        setEnd('');
+        setStart('');
         setType('');
         setCriteria('');
-        setDiagnosisCodes([]);
+        //setDiagnosisCodes([]);
         setDischargeDate(currentDate);
 
         } catch(error: unknown){
