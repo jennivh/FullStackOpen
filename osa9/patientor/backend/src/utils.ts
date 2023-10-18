@@ -85,6 +85,8 @@ export const toNewEntry = (object: unknown): EntryWithoutId => {
         throw new Error("Incorrect data or something is missing");
 
       case "OccupationalHealthcare":
+        console.log('testi');
+        
         if ("employerName" in object) {
             console.log(object);
           if (object && typeof object === "object" && "sickLeave" in object) {

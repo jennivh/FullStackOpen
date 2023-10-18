@@ -57,7 +57,7 @@ const PatientPage = ({diagnosis} : Props) => {
         <p>date of birth: {patient.dateOfBirth}</p>
         <p>occupation: {patient.occupation}</p>
         <h3>Add new entry:</h3>
-        <EntryForm patient={patient} setPatient={setPatient}/>
+        <EntryForm patient={patient} setPatient={setPatient} diagnosis={diagnosis}/>
         <h3>Entries</h3>
         {
             patient.entries?.map(e =>{
