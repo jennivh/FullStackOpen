@@ -200,7 +200,7 @@ const EntryForm = ({ patient, setPatient, diagnosis }: Props) => {
             onChange={(e) => setSpecialist(e.target.value)}
           />
         </div>
-      <FormControl sx={{ m: 2, width: 250, height: 50 }}>
+      <FormControl size='small' sx={{ m: 2, width: 250}}>
         <InputLabel id="demo-multiple-name-label">Diagnosis</InputLabel>
         <Select
           labelId="demo-multiple-name-label"
