@@ -18,12 +18,12 @@ interface Props {
 }
 
 const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
+const ITEM_PADDING_TOP = 4;
 
 const MenuProps = {
     PaperProps: {
       style: {
-        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+        maxHeight: ITEM_HEIGHT * 2.5 + ITEM_PADDING_TOP,
         width: 250,
       },
     },
@@ -35,7 +35,7 @@ const EntryForm = ({ patient, setPatient, diagnosis }: Props) => {
   const [specialist, setSpecialist] = useState("");
   const [employerName, setEmployerName] = useState("");
   const [criteria, setCriteria] = useState("");
-  const [rating, setRating] = useState(0);
+  const [rating, setRating] = useState('');
   const [dia, setDia] = useState<string[]>([]);
   const [message, setMessage] = useState('');
  
@@ -107,10 +107,11 @@ const EntryForm = ({ patient, setPatient, diagnosis }: Props) => {
           setPatient({ ...patient, entries: patient.entries.concat(newE) });
           break;
         case "HealthCheck":
+            console.log(rating);
           const nE: EntryWithoutId = {
             ...entry,
             type,
-            healthCheckRating: rating as HealthCheckRating,
+            healthCheckRating:(rating !== '0' ? Number(rating) : 0) as HealthCheckRating
           };
           const newEntr: Entry = await patientService.createEntry(
             nE,
@@ -130,6 +131,7 @@ const EntryForm = ({ patient, setPatient, diagnosis }: Props) => {
       setCriteria("");
       setDia([]);
       setDischargeDate(currentDate);
+
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         console.log(error);
@@ -198,7 +200,7 @@ const EntryForm = ({ patient, setPatient, diagnosis }: Props) => {
             onChange={(e) => setSpecialist(e.target.value)}
           />
         </div>
-      <FormControl sx={{ m: 1, width: 300 }}>
+      <FormControl sx={{ m: 2, width: 250, height: 50 }}>
         <InputLabel id="demo-multiple-name-label">Diagnosis</InputLabel>
         <Select
           labelId="demo-multiple-name-label"
@@ -311,7 +313,7 @@ const SickLeave = ({ end, start, setStart, setEnd }: SickLeaveProps) => {
 };
 
 interface HealthCheckProps {
-  setRating: (value: number) => void;
+  setRating: (value: string) => void;
 }
 const HealthCheck = ({ setRating }: HealthCheckProps) => {
   return (
@@ -320,28 +322,28 @@ const HealthCheck = ({ setRating }: HealthCheckProps) => {
         type="radio"
         name="rating"
         value={0}
-        onChange={(e) => setRating(Number(e.target.value))}
+        onChange={(e) => setRating(e.target.value)}
       />
       Healthy
       <input
         type="radio"
         name="rating"
         value={1}
-        onChange={(e) => setRating(Number(e.target.value))}
+        onChange={(e) => setRating(e.target.value)}
       />
       Low risk
       <input
         type="radio"
         name="rating"
         value={2}
-        onChange={(e) => setRating(Number(e.target.value))}
+        onChange={(e) => setRating(e.target.value)}
       />
       High Risk
       <input
         type="radio"
         name="rating"
         value={3}
-        onChange={(e) => setRating(Number(e.target.value))}
+        onChange={(e) => setRating(e.target.value)}
       />
       Critical Risk
     </div>
