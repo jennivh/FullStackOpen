@@ -133,6 +133,10 @@ const EntryForm = ({ patient, setPatient, diagnosis }: Props) => {
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         console.log(error);
+        setMessage(error.response?.data);
+        setTimeout(() => {
+            setMessage('');
+        }, 5000);
       }
     }
   };
@@ -152,6 +156,7 @@ const EntryForm = ({ patient, setPatient, diagnosis }: Props) => {
 
   return (
     <>
+    <div style={{color: 'red'}}>{message}</div>
       <form onSubmit={submitEntry}>
         <div>
           <input
