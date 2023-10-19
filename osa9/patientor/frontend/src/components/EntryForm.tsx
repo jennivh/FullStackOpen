@@ -34,10 +34,10 @@ const EntryForm = ({ patient, setPatient, diagnosis }: Props) => {
   const [description, setDescription] = useState("");
   const [specialist, setSpecialist] = useState("");
   const [employerName, setEmployerName] = useState("");
-  const [diagnosisCodes, setDiagnosisCodes] = useState<Diagnosis[]>([]);
   const [criteria, setCriteria] = useState("");
   const [rating, setRating] = useState(0);
   const [dia, setDia] = useState<string[]>([]);
+  const [message, setMessage] = useState('');
  
   const [start, setStart] = useState("");
   const [end, setEnd] = useState('');
@@ -68,22 +68,15 @@ const EntryForm = ({ patient, setPatient, diagnosis }: Props) => {
   const submitEntry = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
+
         console.log(dia);
-
-        dia.forEach(daa => {
-            const di = diagnosis.find( d => d.code == daa);
-            console.log(di);
-            if(di){
-                setDiagnosisCodes(diagnosisCodes.concat(di));
-            }
-            
-        });
-        diagnosisCodes.map( d => console.log(d));
-      const diagnosisTrue: boolean = dia.length>0 ;
-      const diagnosisCodis = diagnosisCodes.map(d => d.code);
-      let entry: NewBaseEntry = { date, description, specialist};
-      if(diagnosisTrue){ entry = {...entry, diagnosisCodes: diagnosisCodis};}
-
+        const entry: NewBaseEntry = {
+          date,
+          description,
+          specialist,
+          diagnosisCodes: dia,
+        };
+      
       switch (type) {
         case "OccupationalHealthcare":
             const sickLeaveTrue = start.length>0 && end.length>0;
@@ -135,7 +128,6 @@ const EntryForm = ({ patient, setPatient, diagnosis }: Props) => {
       setStart("");
       setType("");
       setCriteria("");
-      setDiagnosisCodes([]);
       setDia([]);
       setDischargeDate(currentDate);
     } catch (error: unknown) {
