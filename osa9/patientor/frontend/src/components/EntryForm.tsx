@@ -181,6 +181,7 @@ const EntryForm = ({ patient, setPatient, diagnosis }: Props) => {
           />
           OccupationalHealthCare
         </div>
+        { type !== '' && <div>
         <div>
           Date{" "}
           <input
@@ -240,8 +241,7 @@ const EntryForm = ({ patient, setPatient, diagnosis }: Props) => {
             />
           </div>
         ) : (
-          ""
-        )}
+          "" )}
         {type === "HealthCheck" ? <HealthCheck setRating={setRating} /> : ""}
         {type === "Hospital" ? (
           <Hospital
@@ -253,6 +253,7 @@ const EntryForm = ({ patient, setPatient, diagnosis }: Props) => {
         ) : (
           ""
         )}
+        </div>}
         <button type="submit">submit</button>
       </form>
     </>
