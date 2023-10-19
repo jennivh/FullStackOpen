@@ -52,6 +52,8 @@ export const toNewEntry = (object: unknown): EntryWithoutId => {
         diagnosisCodes: parseDiagnosisCodes(object.diagnosisCodes),
       };
     }
+    console.log(newEntry);
+    
     switch (object.type) {
       case "Hospital":
         if (object && typeof object === "object" && "discharge" in object) {
