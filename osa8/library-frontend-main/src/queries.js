@@ -40,7 +40,7 @@ export const UPDATE_AUTHOR = gql`
         setBornTo: $setBornTo
     ){
         name,
-        setBornTo
+        born
     }
   }
 `

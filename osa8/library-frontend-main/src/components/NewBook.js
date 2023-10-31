@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useMutation } from '@apollo/client'
-import { ALL_AUTHORS, All_BOOKS, CREATE_BOOK, UPDATE_AUTHOR } from '../queries'
+import { ALL_AUTHORS, All_BOOKS, CREATE_BOOK, } from '../queries'
 
 const NewBook = (props) => {
   const [title, setTitle] = useState('')
@@ -8,13 +8,12 @@ const NewBook = (props) => {
   const [published, setPublished] = useState('')
   const [genre, setGenre] = useState('')
   const [genres, setGenres] = useState([])
-  const [name, setName] = useState('')
-  const [year, setYear] = useState('')
+  
 
   const [createBook] = useMutation(CREATE_BOOK, {
     refetchQueries: [All_BOOKS, ALL_AUTHORS]})
 
-  const [updateAuthor] = useMutation(UPDATE_AUTHOR)
+  
 
   if (!props.show) {
     return null
@@ -37,14 +36,7 @@ const NewBook = (props) => {
     setGenre('')
   }
 
-  const update = (event) => {
-    event.preventDefault()
-    updateAuthor({ variables: {name, setBornTo: Number(year)}})
-    console.log('updated')
-
-    setName('')
-    setYear('')
-  }
+  
 
   return (
     <div>
@@ -83,12 +75,7 @@ const NewBook = (props) => {
         <div>genres: {genres.join(' ')}</div>
         <button type="submit">create book</button>
       </form>
-      <h2>Set birthyear</h2>
-      <form onSubmit={update}>
-        <div>Name<input value={name} onChange={e => setName(e.target.value)}/></div>
-        <div>Birth year<input value={year} onChange={e => setYear(e.target.value)}/></div>
-        <button type='submit'>update author</button>
-      </form>
+    
     </div>
   )
 }
