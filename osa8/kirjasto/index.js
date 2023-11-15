@@ -1,8 +1,27 @@
-const { ApolloServer } = require('@apollo/server')
-const { startStandaloneServer } = require('@apollo/server/standalone')
-const { v1: uuid } = require('uuid')
+const { ApolloServer } = require("@apollo/server");
+const { startStandaloneServer } = require("@apollo/server/standalone");
+const { v1: uuid } = require("uuid");
 
-let authors = [
+const mongoose = require("mongoose");
+mongoose.set("strictQuery", false);
+const Book = require("./models/book");
+const Author = require("./models/author");
+require("dotenv").config();
+
+const MONGODB_URI = process.env.MONGO;
+
+console.log("connecting to", MONGODB_URI);
+
+mongoose
+  .connect(MONGODB_URI)
+  .then(() => {
+    console.log("connected to MongoDB");
+  })
+  .catch((error) => {
+    console.log("error connecting to MongoDB", error.message);
+  });
+
+/*let authors = [
   {
     name: 'Robert Martin',
     id: "afa51ab0-344d-11e9-a414-719c6709cf3e",
@@ -27,15 +46,15 @@ let authors = [
     id: "afa5b6f3-344d-11e9-a414-719c6709cf3e",
   },
 ]
-
+*/
 /*
  * Suomi:
  * Saattaisi olla järkevämpää assosioida kirja ja sen tekijä tallettamalla kirjan yhteyteen tekijän nimen sijaan tekijän id
  * Yksinkertaisuuden vuoksi tallennamme kuitenkin kirjan yhteyteen tekijän nimen
  *
-*/
+ */
 
-let books = [
+/*let books = [
   {
     title: 'Clean Code',
     published: 2008,
@@ -86,7 +105,7 @@ let books = [
     genres: ['classic', 'revolution']
   },
 ]
-
+*/
 /*
   you can remove the placeholder query once your first one has been implemented 
 */
@@ -103,8 +122,8 @@ const typeDefs = `
   type Book {
     title: String!,
     published: Int!,
-    author: String!,
-    id: String!,
+    author: Author!,
+    id: ID!,
     genres: [String!]!
   }
   type Query {
@@ -126,61 +145,74 @@ const typeDefs = `
         setBornTo: Int!
     ): Author
   }
-`
+`;
 
 const resolvers = {
   Query: {
-    bookCount: () => books.length,
-    authorCount: () => authors.length,
-    allBooks: (root, args) => {
-        if(args.author && args.genre){
-            const authorBooks = books.filter( b => b.author.toLowerCase() === args.author.toLowerCase())
-            return authorBooks.filter( b => b.genres.includes(args.genre))
-        } else if(args.author){
-            return books.filter( b => b.author.toLowerCase() === args.author.toLowerCase())
-        } else if( args.genre){
-            return books.filter( b => b.genres.includes(args.genre))
-        } else {
-            return books
-        }
-  },
-    allAuthors: () => authors
+    bookCount: async () => Book.collection.countDocuments(),
+    authorCount: async () => Author.collection.countDocuments(),
+    allBooks: async (root, args) => {
+      if (args.author && args.genre) {
+        const author = await Author.findOne({ name: args.author });
+        return await Book.find({ author: author, genres: args.genre}).populate(
+          "author"
+        );
+      } else if (args.author) {
+        const author = await Author.findOne({ name: args.author });
+        return Book.find({ author: author }).populate("author");
+      } else if (args.genre) {
+        return Book.find({ genres: args.genre }).populate("author");
+      }
+      return Book.find({}).populate("author");
+    },
+    allAuthors: async () => Author.find({}),
   },
   Author: {
-    bookCount: (root) => books.filter(b => b.author === root.name).length
-  },
-  
-  Mutation: {
-    addBook: (root, args) => {
-        const book = {...args, id: uuid()}
-        books = books.concat(book)
-        if(!authors.includes(args.author)){
-            const author = {name: args.author, born: null, id: uuid()}
-            authors = authors.concat(author)
-        }
-        return book
+    bookCount: async (root) => {
+      const author = await Author.findOne({name : root.name})
+      return Book.find({author : author}).countDocuments();
     },
-    editAuthor: (root, args) => {
-      console.log(args)
-        const author = authors.find(a => a.name === args.name)
-        if(!author){
-            return null
-        }
-        const updatedAuthor = {...author, born: args.setBornTo}
+  },
 
-        authors = authors.map(a => a.name === args.name ? updatedAuthor : a)
-        return updatedAuthor
-    }
-  }
-}
+  Mutation: {
+    addBook: async (root, args) => {
+      const author = await Author.findOne({ name: args.author });
+      let newAuthor;
+      if (author === null) {
+        newAuthor = new Author({ name: args.author });
+        await newAuthor.save();
+      } else {
+        newAuthor = author;
+      }
+      const book = new Book({
+        title: args.title,
+        published: args.published,
+        genres: args.genres,
+        author: newAuthor,
+      });
+      return book.save();
+    },
+    editAuthor: async (root, args) => {
+      console.log(args);
+      const author = await Author.findOne({ name: args.name });
+      if (!author) {
+        return null;
+      }
+
+      author.born = args.setBornTo;
+
+      return author.save();
+    },
+  },
+};
 
 const server = new ApolloServer({
   typeDefs,
-  resolvers
-})
+  resolvers,
+});
 
 startStandaloneServer(server, {
   listen: { port: 4000 },
 }).then(({ url }) => {
-  console.log(`Server ready at ${url}`)
-})
+  console.log(`Server ready at ${url}`);
+});
