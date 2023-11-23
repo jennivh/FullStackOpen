@@ -19,6 +19,7 @@ const App = () => {
     setToken(null)
     localStorage.clear()
     client.resetStore()
+    setPage('login')
   }
   
   if(result.loading){
@@ -43,7 +44,7 @@ const App = () => {
 
       <NewBook show={page === 'add'} />
 
-      <Login show={page === 'login'}  setToken={setToken}/>
+      <Login show={page === 'login'}  setToken={setToken} setPage={setPage}/>
     </div>
   )
 }

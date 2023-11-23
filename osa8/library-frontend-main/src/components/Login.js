@@ -20,6 +20,9 @@ const Login = (props) => {
         event.preventDefault()
 
         login({variables: {username, password}})
+        setUsername('')
+        setPassword('')
+        props.setPage('books')
     }
 
     if (!props.show) {
