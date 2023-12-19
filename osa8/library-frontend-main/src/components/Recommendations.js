@@ -1,6 +1,6 @@
-import { useLazyQuery, useQuery } from "@apollo/client"
-import { useEffect, useState } from "react"
-import { BOOKS_BY_GENRE, ME } from "../queries"
+import { useLazyQuery } from "@apollo/client"
+import { useEffect } from "react"
+import { BOOKS_BY_GENRE } from "../queries"
 
 const Recommendations = (props) => {
     const [getBooks, results] = useLazyQuery(BOOKS_BY_GENRE)
@@ -20,7 +20,7 @@ const Recommendations = (props) => {
     return (
         <>
         <h1>Recommendations</h1>
-        <>books in your favourite genre <b>{}</b></>
+        <>books in your favourite genre <b>{props.favoriteGenre}</b></>
         <table>
         <tbody>
           <tr>

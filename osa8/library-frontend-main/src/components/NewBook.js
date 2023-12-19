@@ -12,6 +12,13 @@ const NewBook = (props) => {
 
   const [createBook] = useMutation(CREATE_BOOK, {
     refetchQueries: [All_BOOKS, ALL_AUTHORS]
+    /* update: (cache, response) => {
+      cache.updateQuery({ query: All_BOOKS }, ({ allBooks }) => {
+        return {
+          allBooks: allBooks.concat(response.data.addBook),
+        }
+      })
+    }, */
   })
 
   if (!props.show) {
