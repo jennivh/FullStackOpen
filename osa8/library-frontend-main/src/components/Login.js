@@ -11,9 +11,12 @@ const Login = (props) => {
     useEffect(() => {
         if(result.data){
             const token = result.data.login.value
+            console.log(token)
             props.setToken(token)
             localStorage.setItem('user-token', token)
+            props.getUser()
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [result.data])
 
     const submit = async (event) => {
@@ -27,7 +30,7 @@ const Login = (props) => {
 
     if (!props.show) {
         return null
-        }
+    }
 
     return (
         <>

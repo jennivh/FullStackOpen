@@ -3,8 +3,9 @@ import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
 import Login from './components/Login'
-import {useQuery, useApolloClient } from '@apollo/client'
-import { ALL_AUTHORS } from './queries'
+import {useLazyQuery, useQuery, useApolloClient } from '@apollo/client'
+import { ALL_AUTHORS, ME } from './queries'
+import Recommendations from './components/Recommendations'
 
 
 const App = () => {
@@ -12,9 +13,9 @@ const App = () => {
   const [token, setToken] = useState(null)
   const client = useApolloClient()
 
+  const [getUser, user] = useLazyQuery(ME);
   const result = useQuery(ALL_AUTHORS)
   
- 
    const logout = () => {
     setToken(null)
     localStorage.clear()
@@ -26,8 +27,6 @@ const App = () => {
     return <div>loading...</div>
   }
 
- 
-  
   return (
     <div>
       <div>
@@ -42,7 +41,10 @@ const App = () => {
 
       <NewBook show={page === 'add'} />
 
-      <Login show={page === 'login'}  setToken={setToken} setPage={setPage}/>
+      <Recommendations show = {page === 'recommendations'}  favoriteGenre={user?.data?.me?.favoriteGenre}/>
+
+      <Login show={page === 'login'}  setToken={setToken} setPage={setPage} getUser={getUser}/>
+
     </div>
   )
 }
@@ -62,6 +64,7 @@ const LoggedIn = (props) => {
   return (
      <>
             <button onClick={() => props.setPage('add')}>add book</button>
+            <button onClick={() => props.setPage('recommendations')}>recommendations</button>
             <button onClick={props.logout}>logout</button>
      </>
   )

@@ -25,8 +25,6 @@ const Books = (props) => {
     if(genre === "all"){
       setBooks(allBooks)
     }
-    console.log("data",data)
-    console.log(books)
   },[allBooks, books, data, genre, getGenreBooks])
 
   if (!props.show) {
@@ -42,13 +40,9 @@ const Books = (props) => {
   .flat()
   .concat("all");
   const genres = [...new Set(genreArray)];
-  console.log(genres);
-  console.log(data);
 
   const handleClick = (genre) => {
     setGenre(genre);
-   
- 
   };
 
 
