@@ -31,7 +31,7 @@ const Countries = ({ filter, countries }) => {
     c.name.common.toLowerCase().includes(filter.toLowerCase())
   ).length;
 
-  if (findMatching < 10 && findMatching > 1) {
+  if (findMatching < 10) {
     return (
       <div>
         {countries
@@ -41,28 +41,18 @@ const Countries = ({ filter, countries }) => {
           .map((c) => {
             return (
               <div key={c.name.common}>
-                <CountryInfo country={c} />
+                <CountryInfo country={c} findMatching={findMatching}/>
               </div>
             );
           })}
       </div>
-    );
-  } else if (findMatching == 1) {
-    return (
-      <>
-        <Country
-          country={countries.find((c) =>
-            c.name.common.toLowerCase().includes(filter.toLowerCase())
-          )}
-        />
-      </>
     );
   } else {
     return <>too many matches, spesify another filter</>;
   }
 };
 
-const CountryInfo = ({ country }) => {
+const CountryInfo = ({ country, findMatching }) => {
   const [show, setShow] = useState(false);
   const [weather, setWeather] = useState({});
   useEffect(() => {
@@ -76,6 +66,17 @@ const CountryInfo = ({ country }) => {
 
   const handleClick = () => setShow(!show);
 
+  if (findMatching == 1) {
+    return (
+      <>
+        <Country
+          country={country}
+          weather={weather}
+        />
+      </>
+    );
+  }else{
+
   return (
     <>
       <div>
@@ -84,6 +85,7 @@ const CountryInfo = ({ country }) => {
       {show ? <Country country={country} weather={weather} /> : ""}
     </>
   );
+  }
 };
 
 const Country = ({ country, weather }) => {
