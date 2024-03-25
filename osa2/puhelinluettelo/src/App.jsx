@@ -62,6 +62,15 @@ const App = () => {
           }, 5000)
           setNewName("");
           setNewNumber("");
+        })
+        .catch(error => {
+          console.log("error",error)
+          console.log("error.response",error.response)
+          setColor({color: 'red'})
+          setMessage(`${error.response.data.error}`)
+          setTimeout(() => {
+            setMessage(null)
+          }, 5000)
         });
     }
   };
