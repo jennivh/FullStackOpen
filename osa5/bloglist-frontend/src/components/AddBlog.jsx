@@ -1,7 +1,8 @@
-import { useState } from "react"
+import PropTypes from 'prop-types'
+import { useState } from 'react'
 
-const AddBlog = ({submitNewBlog}) => {
-    const [title, setTitle] = useState('')
+const AddBlog = ({ submitNewBlog }) => {
+  const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
 
@@ -14,16 +15,21 @@ const AddBlog = ({submitNewBlog}) => {
     setUrl('')
   }
 
-    return( 
+  return (
     <div>
-        <h2>create new</h2>
-        <form onSubmit={addBlog}>
-          <div><label>title:</label><input type="text" value={title} onChange={(e) => setTitle(e.target.value)} /></div>
-          <div><label>author:</label><input type="text" value={author} onChange={(e) => setAuthor(e.target.value)} /></div>
-          <div><label>url:</label><input type="text" value={url} onChange={(e) => setUrl(e.target.value)} /></div>
-          <button type='submit'>create</button>
-        </form>
-      </div>)
+      <h2>create new</h2>
+      <form onSubmit={addBlog}>
+        <div><label>title:</label><input type="text" value={title} onChange={(e) => setTitle(e.target.value)} /></div>
+        <div><label>author:</label><input type="text" value={author} onChange={(e) => setAuthor(e.target.value)} /></div>
+        <div><label>url:</label><input type="text" value={url} onChange={(e) => setUrl(e.target.value)} /></div>
+        <button type='submit'>create</button>
+      </form>
+    </div>
+  )
+}
+
+AddBlog.propTypes = {
+  submitNewBlog: PropTypes.func.isRequired
 }
 
 export default AddBlog

@@ -1,6 +1,7 @@
-import { useState } from "react"
+import PropTypes from 'prop-types'
+import { useState } from 'react'
 
-const Blog = ({ blog, updateBlogs }) => {
+const Blog = ({ blog, updateBlogs, deleteBlog }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -8,8 +9,8 @@ const Blog = ({ blog, updateBlogs }) => {
     borderWidth: 1,
     marginBottom: 5
   }
-  const [view, setView] =useState(true)
-  
+  const [view, setView] = useState(true)
+
   const ToggleView = () => {
     console.log(blog)
     setView(!view)
@@ -18,22 +19,34 @@ const Blog = ({ blog, updateBlogs }) => {
   const addLike = () => {
     const updatedBlog = {
       ...blog,
-      likes: blog.likes +1
+      likes: blog.likes + 1
     }
     updateBlogs(updatedBlog, blog.id)
   }
 
+  const removeBlog = () => {
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`))
+      deleteBlog(blog.id)
+    console.log('lol')
+  }
 
-  return(
-  <div style={blogStyle}>
-    {blog.title}  {blog.author}<button onClick={ToggleView}>{view ? 'view' : 'hide'}</button>
-    {!view && <div>
-      <p>{blog.url}</p>
-      <div><p>{blog.likes}</p><button onClick={addLike}>like</button></div>
-    <p>{blog.user.username}</p>
-    </div>}
-  </div>  
-)
+  return (
+    <div style={blogStyle}>
+      {blog.title}  {blog.author}<button onClick={ToggleView}>{view ? 'view' : 'hide'}</button>
+      {!view && <div>
+        <p>{blog.url}</p>
+        <div><p>{blog.likes}</p><button onClick={addLike}>like</button></div>
+        <p>{blog.user.username}</p>
+        <button onClick={removeBlog}>remove</button>
+      </div>}
+    </div>
+  )
+}
+
+Blog.propTypes = {
+  blog: PropTypes.object.isRequired,
+  updateBlogs: PropTypes.func.isRequired,
+  deleteBlog: PropTypes.func.isRequired
 }
 
 export default Blog
