@@ -11,9 +11,7 @@ const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null)
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
+
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -55,20 +53,25 @@ const App = () => {
     setUser(null)
   }
 
-  const submitNewBlog = async (e) => {
-    e.preventDefault()
+  const submitNewBlog = async (newBlog) => {
     console.log('lol')
-    const newBlog = { title, author, url }
-    
-      const sentBlog = await blogService.create(newBlog)
+    const sentBlog = await blogService.create(newBlog)
     setMessage(`a new blog ${sentBlog.title} by ${sentBlog.author}`)
     setTimeout(() => {
       setMessage(null)
     }, 2000)
 
     console.log(sentBlog)
-    
-    
+    setBlogs(blogs.concat(sentBlog))
+
+  }
+
+  const updateBlogs = async (updatedBlog, id) => {
+    const updatedLikes = await blogService.update(id, updatedBlog)
+    console.log(updatedLikes)
+    updatedLikes.user = updatedBlog.user
+    const updatedBlogs = blogs.map(b => b.id === updatedLikes.id ? updatedLikes : b)
+    setBlogs(updatedBlogs)
   }
 
   if (user === null) {
@@ -109,10 +112,10 @@ const App = () => {
           <button onClick={logOut}>log out</button>
         </div>
         <Togglable buttonLabel="new blog">
-        <AddBlog submitNewBlog={submitNewBlog} title={title} setTitle={setTitle} setAuthor={setAuthor} author={author} url={url} setUrl={setUrl}/>
+          <AddBlog submitNewBlog={submitNewBlog} />
         </Togglable>
         {blogs.map((blog) => (
-          <Blog key={blog.id} blog={blog} />
+          <Blog key={blog.id} blog={blog} updateBlogs={updateBlogs} />
         ))}
       </div>
     );
