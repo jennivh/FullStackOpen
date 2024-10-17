@@ -32,7 +32,7 @@ const Blog = ({ blog, updateBlogs, deleteBlog }) => {
 
   return (
     <div style={blogStyle}>
-      {blog.title}  {blog.author}<button onClick={ToggleView}>{view ? 'view' : 'hide'}</button>
+      <div>{blog.title}</div>  {blog.author}<button className="view" onClick={ToggleView}>{view ? 'view' : 'hide'}</button>
       {!view && <div>
         <p>{blog.url}</p>
         <div><p>{blog.likes}</p><button onClick={addLike}>like</button></div>
