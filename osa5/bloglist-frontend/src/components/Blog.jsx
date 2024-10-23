@@ -14,6 +14,7 @@ const Blog = ({ blog, updateBlogs, deleteBlog }) => {
   const ToggleView = () => {
     console.log(blog)
     setView(!view)
+    console.log(blog.user.username)
   }
 
   const addLike = () => {
@@ -35,8 +36,8 @@ const Blog = ({ blog, updateBlogs, deleteBlog }) => {
       <div>{blog.title}</div>  {blog.author}<button className="view" onClick={ToggleView}>{view ? 'view' : 'hide'}</button>
       {!view && <div>
         <p>{blog.url}</p>
-        <div><p>{blog.likes}</p><button onClick={addLike}>like</button></div>
-        <p>{blog.user.username}</p>
+        <div><p data-testid='number'>{blog.likes}</p><button onClick={addLike}>like</button></div>
+        {blog.user!==undefined ? <p>{blog.user.username}</p> : ''}
         <button onClick={removeBlog}>remove</button>
       </div>}
     </div>

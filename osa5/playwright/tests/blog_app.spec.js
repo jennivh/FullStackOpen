@@ -49,12 +49,29 @@ describe('Blog app', () => {
     test('a new blog can be created', async ({ page }) => {
       await page.getByRole('button',{name:"new blog"}).click()
       await page.getByTestId('title').fill('tiiteli')
-      await page.getByTestId('author').fill('taateli')
+      await page.getByTestId('author').fill('tooteli')
       await page.getByTestId('url').fill('tuuteli')
       await page.getByRole('button',{name:'create'}).click()
 
-      await expect(page.getByText('taateli')).toBeVisible()
+      await expect(page.getByText('tiiteli', {exact:'true'})).toBeVisible()
     })
+
+    describe('new blog is added', () => {
+      beforeEach(async ({page, request}) => {
+        await page.getByRole('button',{name:"new blog"}).click()
+        await page.getByTestId('title').fill('tiiteli')
+        await page.getByTestId('author').fill('taateli')
+        await page.getByTestId('url').fill('tuuteli')
+        await page.getByRole('button',{name:'create'}).click()
+      })
+
+      test('blog can be liked', async ({page}) => {
+        await page.getByRole('button',{name:'view'}).last().click()
+        await page.getByRole('button', {name: 'like'}).click()
+        await expect(page.getByTestId('number')).toHaveCount(1)
+      })
+
+    }) 
   })
 
 })
