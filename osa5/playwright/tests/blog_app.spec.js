@@ -62,6 +62,26 @@ describe('Blog app', () => {
       await expect(page.getByText('tiiteli', {exact:'true'})).toBeVisible()
     })
 
+    test('blogs are ordered by likes', async ({ page }) => {
+      await page.getByRole('button', { name: 'new blog' }).click()
+      await page.getByTestId('title').fill('First Blog')
+      await page.getByTestId('author').fill('Author 1')
+      await page.getByTestId('url').fill('http://firstblog.com')
+      await page.getByRole('button', { name: 'create' }).click()
+
+      await page.getByTestId('title').fill('Second Blog')
+      await page.getByTestId('author').fill('Author 2')
+      await page.getByTestId('url').fill('http://secondblog.com')
+      await page.getByRole('button', { name: 'create' }).click()
+
+      await page.getByRole('button', { name: 'view' }).nth(1).click()
+      await page.getByRole('button', { name: 'like' }).click()
+      await page.getByRole('button', { name: 'like' }).click()
+
+      await expect(page.getByTestId('blog').first().getByTestId('title')).toHaveText('Second Blog')
+      await expect(page.getByTestId('blog').last().getByTestId('title')).toHaveText('First Blog')
+    })
+
     describe('blog exists', () => {
       beforeEach(async ({page, request}) => {
         await page.getByRole('button',{name:"new blog"}).click()
@@ -98,6 +118,8 @@ describe('Blog app', () => {
           await expect(page.getByRole('button',{name:'remove'})).not.toBeVisible()
         })
       })
+
+      
     }) 
 
     
