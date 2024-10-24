@@ -16,13 +16,11 @@ blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) =
     await Blog.findByIdAndDelete(request.params.id)
     user.blogs = user.blogs.filter(b => b.id !== request.params.id)
     await user.save()
-    response.status(201).end()
+    response.status(204).end()
   } else{
     response.status(403).json({error: 'wrong user or invalid id'})
   }
   
-
-  response.status(204).end()
 })
 
 blogsRouter.put('/:id', async (request, response) => {

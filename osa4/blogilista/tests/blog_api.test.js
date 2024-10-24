@@ -146,14 +146,15 @@ test("no title", async () => {
     const blog = await api.post('/api/blogs').set("Authorization", `Bearer ${token}`).send(newBlog)
     const all = await helper.blogsInDb()
     console.log('blog', blog)
-    console.log('all')
-    assert.strictEqual(all.body.length, initialBlogs.length+1)
+    console.log("all'",all)
+    assert.strictEqual(all.length, initialBlogs.length+1)
     await api
       .delete(`/api/blogs/${blog.body.id}`)
       .set("Authorization", `Bearer ${token}`)
       .expect(204);
 
     const blogsAgain = await api.get("/api/blogs");
+    console.log('blogsAgain', blogsAgain)
     assert.strictEqual(blogsAgain.body.length, initialBlogs.length);
   });
 
