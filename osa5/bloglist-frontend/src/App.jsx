@@ -36,6 +36,7 @@ const App = () => {
       )
       blogService.setToken(user.token)
       setUser(user)
+      console.log(user)
       setUsername('')
       setPassword('')
 
@@ -126,7 +127,7 @@ const App = () => {
           <AddBlog submitNewBlog={submitNewBlog} />
         </Togglable>
         {blogs.sort((a, b) => b.likes - a.likes).map((blog) => (
-          <Blog key={blog.id} blog={blog} updateBlogs={updateBlogs} deleteBlog={deleteBlog} />
+          <Blog key={blog.id} user={user} blog={blog} updateBlogs={updateBlogs} deleteBlog={deleteBlog} />
         ))}
       </div>
     )

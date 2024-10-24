@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import { useState } from 'react'
 
-const Blog = ({ blog, updateBlogs, deleteBlog }) => {
+const Blog = ({ user, blog, updateBlogs, deleteBlog }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -38,7 +38,7 @@ const Blog = ({ blog, updateBlogs, deleteBlog }) => {
         <p>{blog.url}</p>
         <div><p data-testid='number'>{blog.likes}</p><button onClick={addLike}>like</button></div>
         {blog.user!==undefined ? <p>{blog.user.username}</p> : ''}
-        <button onClick={removeBlog}>remove</button>
+        {user.username===blog.user.username ? <button onClick={removeBlog}>remove</button> : ''}
       </div>}
     </div>
   )

@@ -9,6 +9,12 @@ describe('Blog app', () => {
         password: 'kuusi'
       }
     })
+    await request.post('http://localhost:3003/api/users', {
+      data: {
+        username: 'uus',
+        password: 'hehe'
+      }
+    })
 
     await page.goto('http://localhost:5173')
   })
@@ -69,17 +75,32 @@ describe('Blog app', () => {
 
       test('blog can be liked', async ({page}) => {
         await page.getByRole('button', {name: 'like'}).click()
-        await expect(page.getByTestId('number')).toHaveCount(1)
+        await expect(page.getByTestId('number')).toHaveText('1')
       })
 
       test('blog can be deleted', async ({page}) => {
         page.on('dialog', dialog => dialog.accept());
         await page.getByRole('button', {name:'remove'}).click()
         
-        await expect(page.getByText("tiiteli", {exact:true})).not.toBeVisible()
+        await expect(page.getByText("tiiteli", {exact:'true'})).not.toBeVisible()
       })
 
+      describe("other user logs in",() => {
+        beforeEach(async ({page,request}) => {
+          await page.getByRole('button',{name:'log out'}).click()
+          await page.getByRole('textbox').first().fill('uus')
+          await page.getByRole('textbox').last().fill('hehe')
+          await page.getByRole('button').click()
+        })
+
+        test('Can not remove other persons blog', async ({page}) => {
+          await page.getByRole('button',{name:'view'}).click()
+          await expect(page.getByRole('button',{name:'remove'})).not.toBeVisible()
+        })
+      })
     }) 
+
+    
   })
 
 })
