@@ -56,19 +56,27 @@ describe('Blog app', () => {
       await expect(page.getByText('tiiteli', {exact:'true'})).toBeVisible()
     })
 
-    describe('new blog is added', () => {
+    describe('blog exists', () => {
       beforeEach(async ({page, request}) => {
         await page.getByRole('button',{name:"new blog"}).click()
         await page.getByTestId('title').fill('tiiteli')
         await page.getByTestId('author').fill('taateli')
         await page.getByTestId('url').fill('tuuteli')
         await page.getByRole('button',{name:'create'}).click()
+        await page.getByRole('button',{name:'view'}).last().click()
+
       })
 
       test('blog can be liked', async ({page}) => {
-        await page.getByRole('button',{name:'view'}).last().click()
         await page.getByRole('button', {name: 'like'}).click()
         await expect(page.getByTestId('number')).toHaveCount(1)
+      })
+
+      test('blog can be deleted', async ({page}) => {
+        page.on('dialog', dialog => dialog.accept());
+        await page.getByRole('button', {name:'remove'}).click()
+        
+        await expect(page.getByText("tiiteli", {exact:true})).not.toBeVisible()
       })
 
     }) 
