@@ -1,0 +1,14 @@
+{
+    "anecdotes": [
+        {
+        "content": "If it hurts",
+        "id": 1,
+        "votes": 0
+        },
+        {
+        "content": "If it doesn't work",
+        "id": 2,
+        "votes": 0
+        }
+    ]
+}
