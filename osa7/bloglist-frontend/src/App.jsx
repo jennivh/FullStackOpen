@@ -7,6 +7,8 @@ import Togglable from "./components/Togglable";
 import { useNotificationDispatch } from "./components/NotificationContext";
 import Notification from "./components/Notification";
 import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 const App = () => {
   
@@ -21,8 +23,9 @@ const App = () => {
     }
   )
 
-  const dispatch = useNotificationDispatch();
   const blogs = result.data;
+  const dispatch = useNotificationDispatch();
+  
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
@@ -32,6 +35,59 @@ const App = () => {
       setToken(user.token);
     }
   }, []);
+
+  const queryClient = useQueryClient()
+
+  const newBlogMutation = useMutation({
+    mutationFn: create,
+    onSuccess: (newBlog) => {
+      const blogs = queryClient.getQueryData(['blogs'])
+      if (blogs) {
+        queryClient.setQueryData(['blogs'], [...blogs, newBlog])
+        dispatch({ type: "SET_NOTIFICATION", data: `a new blog ${sentBlog.title} by ${sentBlog.author}` });
+    setTimeout(() => {
+      dispatch({ type: "CLEAR_NOTIFICATION" });
+    }, 2000);
+      } else {
+        queryClient.invalidateQueries(['blogs'])
+      }},
+    onError: (error) => {
+      dispatch({ type: 'SET_NOTIFICATION', data: error.response.data.error })
+      setTimeout(() => {
+        dispatch({ type: 'CLEAR_NOTIFICATION' })  
+          }, 5000)
+        }
+      }
+  )
+
+  const updateVotesMutation = useMutation({
+    mutationFn: update,
+    onSuccess: (updatedBlog) => {
+      const blogs = queryClient.getQueryData(['blogs'])
+      if(blogs){
+        const updatedBlogs = blogs.map(blog =>
+          blog.id === id ? updatedBlog : blog
+        )
+        queryClient.setQueryData(['blogs'], updatedBlogs)
+      }
+      else {
+        queryClient.invalidateQueries(['blogs'])
+      }
+    }
+  })
+
+  const deleteBlogMutation = useMutation({
+    mutationFn: deleteBlog,
+    onSuccess: (deletedBlog) => {
+      const blogs = queryClient.getQueryData(['blogs'])
+      if (blogs) {
+        const newBlogs = blogs.filter(blog => blog.id !== deletedBlog.id)
+        queryClient.setQueryData(['blogs'], newBlogs)
+      } else {
+        queryClient.invalidateQueries(['blogs'])
+      }
+    }
+  })
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -57,41 +113,23 @@ const App = () => {
     setUser(null);
   };
 
-  const submitNewBlog = async (newBlog) => {
+  const submitNewBlog = (newBlog) => {
     console.log("lol");
-    const sentBlog = await create(newBlog);
-    sentBlog.user = user;
-    dispatch({ type: "SET_NOTIFICATION", data: `a new blog ${sentBlog.title} by ${sentBlog.author}` });
-    setTimeout(() => {
-      dispatch({ type: "CLEAR_NOTIFICATION" });
-    }, 2000);
-
-    console.log(sentBlog);
-
-    setBlogs(blogs.concat(sentBlog));
+    newBlogMutation.mutate(newBlog);
+    
   };
 
-  const updateBlogs = async (updatedBlog, id) => {
-    const updatedLikes = await update(id, updatedBlog);
-    console.log(updatedLikes);
-    updatedLikes.user = updatedBlog.user;
-    const updatedBlogs = blogs.map((b) =>
-      b.id === updatedLikes.id ? updatedLikes : b,
-    );
-    setBlogs(updatedBlogs);
+  const updateBlogs = (updatedBlog) => {
+    console.log(updatedBlog);
+    const blogToSend = {...updatedBlog, likes: updatedBlog.likes + 1};
+    updateVotesMutation.mutate(blogToSend);
   };
 
-  const deleteBlog = async (id) => {
-    const deletedBlog = await deleteBlog(id);
-    console.log(deletedBlog);
-    const newBlogs = blogs.filter((b) => b.id !== id);
-    setBlogs(newBlogs);
-    console.log(blogs);
-    dispatch({ type: "SET_NOTIFICATION", data: `blog ${deletedBlog.title} by ${deletedBlog.author} removed` });
-    setTimeout(() => {
-      dispatch({ type: "CLEAR_NOTIFICATION" });
-    }, 2000);
+  const deleteBlogFromBlogs = (id) => {
+    deleteBlogMutation.mutate(id);
   };
+
+ 
 
   if (result.isError) {
     return <div>blog service not available due to problems in server</div>
@@ -149,7 +187,7 @@ const App = () => {
               user={user}
               blog={blog}
               updateBlogs={updateBlogs}
-              deleteBlog={deleteBlog}
+              deleteBlog={deleteBlogFromBlogs}
             />
           ))}
       </div>

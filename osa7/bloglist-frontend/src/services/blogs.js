@@ -18,8 +18,9 @@ export const getAll = async () => {
   return response.data;
 };
 
-export const update = async (id, blog) => {
-  const response = await axios.put(`${baseUrl}/${id}`, blog);
+export const update = async (blog) => {
+  console.log("blog to update: axios", blog);
+  const response = await axios.put(`${baseUrl}/${blog.id}`, blog);
   return response.data;
 };
 

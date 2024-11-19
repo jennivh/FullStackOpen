@@ -26,6 +26,7 @@ blogsRouter.delete(
 );
 
 blogsRouter.put("/:id", async (request, response) => {
+  console.log("blog to update",request.body);
   const body = request.body;
 
   const blog = {

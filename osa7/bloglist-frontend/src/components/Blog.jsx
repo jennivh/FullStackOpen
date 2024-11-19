@@ -18,11 +18,7 @@ const Blog = ({ user, blog, updateBlogs, deleteBlog }) => {
   };
 
   const addLike = () => {
-    const updatedBlog = {
-      ...blog,
-      likes: blog.likes + 1,
-    };
-    updateBlogs(updatedBlog, blog.id);
+    updateBlogs(blog, blog.id);
   };
 
   const removeBlog = () => {
