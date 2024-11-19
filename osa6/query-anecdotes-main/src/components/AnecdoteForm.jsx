@@ -10,7 +10,11 @@ const AnecdoteForm = () => {
     mutationFn: createAnecdote,
     onSuccess: (newAnecdote) => {
       const anecdotes = queryClient.getQueryData('anecdotes')
-      queryClient.setQueryData('anecdotes', anecdotes.concat(newAnecdote))
+      if (anecdotes) {
+        queryClient.setQueryData(['anecdotes'], [...anecdotes, newAnecdote])
+      } else {
+        queryClient.invalidateQueries(['anecdotes'])
+      }
     }
   })
 
