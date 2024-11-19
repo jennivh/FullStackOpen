@@ -1,41 +1,16 @@
-import {createContext, useReducer, useContext} from 'react'
-
-const NotificationContext = createContext()
-
-const notificationReducer = (state, action) => {
-  switch (action.type) {
-    case 'SET_NOTIFICATION':
-      return action.data
-    case 'CLEAR_NOTIFICATION':
-      return null
-    default:
-      return state
-  }
-}
-
-export const useNotificationValue = () => {
-  return useContext(NotificationContext)[0]
-}
-
-export const useNotificationDispatch = () => {
-  return useContext(NotificationContext)[1]
-}
+import { useNotificationValue } from "./NotificationContext";
 
 const Notification = () => {
+  const notification = useNotificationValue();
+
   const style = {
-    border: 'solid',
+    border: "solid",
     padding: 10,
     borderWidth: 1,
-    marginBottom: 5
-  }
-  
-  if (true) return null
+    marginBottom: 5,
+  };
 
-  return (
-    <div style={style}>
-      
-    </div>
-  )
+  return notification ? <div style={style}>{notification}</div> : null;
 }
 
-export default Notification
+export default Notification;
