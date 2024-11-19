@@ -25,9 +25,11 @@ export const update = async (blog) => {
 };
 
 export const deleteBlog = async (id) => {
+  console.log("delete blog: axios", id);
   const config = {
     headers: { Authorization: token },
   };
+  console.log("config", config);
   const response = await axios.delete(`${baseUrl}/${id}`, config);
   return response.data;
 };

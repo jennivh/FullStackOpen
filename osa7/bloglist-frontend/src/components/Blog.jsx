@@ -18,12 +18,14 @@ const Blog = ({ user, blog, updateBlogs, deleteBlog }) => {
   };
 
   const addLike = () => {
-    updateBlogs(blog, blog.id);
+    updateBlogs(blog);
   };
 
   const removeBlog = () => {
-    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`))
+    console.log("blog to delete", blog);
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)){
       deleteBlog(blog.id);
+    }     
     console.log("lol");
   };
 

@@ -12,7 +12,6 @@ import { useQueryClient } from "@tanstack/react-query";
 
 
 const App = () => {
-  const [writerOfBlog, setWriterOfBlog] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
@@ -39,6 +38,7 @@ const App = () => {
   const newBlogMutation = useMutation({
     mutationFn: create,
     onSuccess: (newBlog) => {
+      newBlog.user = user
       const blogs = queryClient.getQueryData(['blogs'])
       if (blogs) {
         queryClient.setQueryData(['blogs'], [...blogs, newBlog])
@@ -60,12 +60,12 @@ const App = () => {
 
   const updateVotesMutation = useMutation({
     mutationFn: update,
-    onSuccess: (updatedBlog) => {
-      updatedBlog.user = writerOfBlog
+    onSuccess: (data, variables) => {
+      data.user = variables.user
       const blogs = queryClient.getQueryData(['blogs'])
       if(blogs){
         const updatedBlogs = blogs.map(blog =>
-          blog.id === updatedBlog.id ? updatedBlog : blog
+          blog.id === data.id ? data : blog
         )
         queryClient.setQueryData(['blogs'], updatedBlogs)
       }
@@ -76,15 +76,21 @@ const App = () => {
   })
 
   const deleteBlogMutation = useMutation({
-    mutationFn: deleteBlog,
-    onSuccess: (deletedBlog) => {
+    mutationFn: (id) => deleteBlog(id),
+    onSuccess: (data,variables) => {
       const blogs = queryClient.getQueryData(['blogs'])
       if (blogs) {
-        const newBlogs = blogs.filter(blog => blog.id !== deletedBlog.id)
+        const newBlogs = blogs.filter(blog => blog.id !== variables)
         queryClient.setQueryData(['blogs'], newBlogs)
       } else {
         queryClient.invalidateQueries(['blogs'])
       }
+    },
+    onError: (error) => {
+      dispatch({ type: 'SET_NOTIFICATION', data: error.response.data.error })
+      setTimeout(() => {
+        dispatch({ type: 'CLEAR_NOTIFICATION' })  
+      }, 5000)
     }
   })
 
@@ -122,12 +128,12 @@ const App = () => {
 
   const updateBlogs = (updatedBlog) => {
     console.log(updatedBlog);
-    setWriterOfBlog(updatedBlog.user);
     const blogToSend = {...updatedBlog, likes: updatedBlog.likes + 1};
-    const sentBlog = updateVotesMutation.mutate(blogToSend);
+    updateVotesMutation.mutate(blogToSend);
   };
 
   const deleteBlogFromBlogs = (id) => {
+    console.log("delete blog", id);
     deleteBlogMutation.mutate(id);
   };
 

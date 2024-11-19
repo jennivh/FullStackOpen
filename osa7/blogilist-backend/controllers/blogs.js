@@ -14,11 +14,13 @@ blogsRouter.delete(
   "/:id",
   middleware.userExtractor,
   async (request, response) => {
+    console.log("delete blog: server", request.params.id);
     const user = request.user;
     if (user.blogs.includes(request.params.id)) {
       await Blog.findByIdAndDelete(request.params.id);
       user.blogs = user.blogs.filter((b) => b.id !== request.params.id);
       await user.save();
+      console.log("it worked!")
       response.status(204).end();
     } else {
       response.status(403).json({ error: "wrong user or invalid id" });
