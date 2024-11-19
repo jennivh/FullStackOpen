@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const Blog = require("../models/blog");
 const User = require("../models/user");
 const middleware = require("../utils/middleware");
+const user = require("../models/user");
 
 blogsRouter.get("/", async (request, response) => {
   const blogs = await Blog.find({}).populate("user", { username: 1, name: 1 });
@@ -33,7 +34,7 @@ blogsRouter.put("/:id", async (request, response) => {
     title: body.title,
     author: body.author,
     url: body.url,
-    likes: body.likes,
+    likes: body.likes
   };
 
   const newBlog = await Blog.findByIdAndUpdate(request.params.id, blog, {

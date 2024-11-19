@@ -10,22 +10,14 @@ import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 
+
 const App = () => {
-  
+  const [writerOfBlog, setWriterOfBlog] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
-  const result = useQuery(
-    {
-      queryKey: ['blogs'],
-      queryFn: getAll,
-      refetchOnWindowFocus: false
-    }
-  )
-
-  const blogs = result.data;
   const dispatch = useNotificationDispatch();
-  
+  const queryClient = useQueryClient()
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
@@ -36,7 +28,13 @@ const App = () => {
     }
   }, []);
 
-  const queryClient = useQueryClient()
+  const result = useQuery(
+    {
+      queryKey: ['blogs'],
+      queryFn: getAll,
+      refetchOnWindowFocus: false
+    }
+  )
 
   const newBlogMutation = useMutation({
     mutationFn: create,
@@ -63,10 +61,11 @@ const App = () => {
   const updateVotesMutation = useMutation({
     mutationFn: update,
     onSuccess: (updatedBlog) => {
+      updatedBlog.user = writerOfBlog
       const blogs = queryClient.getQueryData(['blogs'])
       if(blogs){
         const updatedBlogs = blogs.map(blog =>
-          blog.id === id ? updatedBlog : blog
+          blog.id === updatedBlog.id ? updatedBlog : blog
         )
         queryClient.setQueryData(['blogs'], updatedBlogs)
       }
@@ -88,6 +87,8 @@ const App = () => {
       }
     }
   })
+
+  const blogs = result.data;
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -121,8 +122,9 @@ const App = () => {
 
   const updateBlogs = (updatedBlog) => {
     console.log(updatedBlog);
+    setWriterOfBlog(updatedBlog.user);
     const blogToSend = {...updatedBlog, likes: updatedBlog.likes + 1};
-    updateVotesMutation.mutate(blogToSend);
+    const sentBlog = updateVotesMutation.mutate(blogToSend);
   };
 
   const deleteBlogFromBlogs = (id) => {
