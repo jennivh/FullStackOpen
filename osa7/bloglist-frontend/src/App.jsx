@@ -14,6 +14,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Users from "./components/Users";
 import Blogs from "./components/Blogs";
 import userService from "./services/users";
+import User from "./components/User";
 
 const userReducer = (state, action) => {
   switch (action.type) {
@@ -210,7 +211,7 @@ const App = () => {
           <Route path="/" element={<Blogs/>}></Route>
           <Route path="/users" element={<Users users={users}/>}></Route>
           <Route path="/:id"></Route>
-          <Route path="/users/:id"></Route>
+          <Route path="/users/:id" element={<User users={users}/>}></Route>
         </Routes>
       </Router>
       <div>
