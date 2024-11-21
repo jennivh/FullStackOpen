@@ -10,6 +10,10 @@ import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import UserContext from "./UserContext";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import Users from "./components/Users";
+import Blogs from "./components/Blogs";
+import userService from "./services/users";
 
 const userReducer = (state, action) => {
   switch (action.type) {
@@ -25,6 +29,7 @@ const userReducer = (state, action) => {
 const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [users, setUsers] = useState([])
 
   const [user, userDispatch] = useReducer(userReducer, null);
   const dispatch = useNotificationDispatch();
@@ -39,6 +44,14 @@ const App = () => {
     }
   }, []);
 
+  useEffect(() => {
+    const fetchUsers = async () => {
+        const users = await userService.getAllUsers()
+        console.log(users)
+        setUsers(users)
+    }
+    fetchUsers()
+}, [])
   const result = useQuery(
     {
       queryKey: ['blogs'],
@@ -190,6 +203,16 @@ const App = () => {
   } else {
     return (
       <UserContext.Provider value={[user, userDispatch]}> 
+      <Router>
+        <Link to="/">blogs</Link>
+        <Link to="/users">users</Link>
+        <Routes>
+          <Route path="/" element={<Blogs/>}></Route>
+          <Route path="/users" element={<Users users={users}/>}></Route>
+          <Route path="/:id"></Route>
+          <Route path="/users/:id"></Route>
+        </Routes>
+      </Router>
       <div>
         <Notification/>
         <h2>blogs</h2>
