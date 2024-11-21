@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useReducer } from "react";
 import Blog from "./components/Blog";
 import { getAll, setToken, create, update, deleteBlog } from "./services/blogs";
 import loginService from "./services/login";
@@ -9,12 +9,24 @@ import Notification from "./components/Notification";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
+import UserContext from "./UserContext";
 
+const userReducer = (state, action) => {
+  switch (action.type) {
+    case "SET":
+      return action.payload;
+    case "LOGOUT":
+      return null;
+    default:
+      return state;
+  }
+}
 
 const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [user, setUser] = useState(null);
+
+  const [user, userDispatch] = useReducer(userReducer, null);
   const dispatch = useNotificationDispatch();
   const queryClient = useQueryClient()
 
@@ -22,7 +34,7 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
-      setUser(user);
+      userDispatch({ type: "SET", payload: user });
       setToken(user.token);
     }
   }, []);
@@ -102,7 +114,7 @@ const App = () => {
       const user = await loginService.login({ username, password });
       window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
       setToken(user.token);
-      setUser(user);
+      userDispatch({ type: "SET", payload: user });
       console.log(user);
       setUsername("");
       setPassword("");
@@ -117,7 +129,7 @@ const App = () => {
   const logOut = () => {
     console.log("log out");
     window.localStorage.removeItem("loggedBlogappUser");
-    setUser(null);
+    userDispatch({ type: "LOGOUT" });
   };
 
   const submitNewBlog = (newBlog) => {
@@ -177,6 +189,7 @@ const App = () => {
     );
   } else {
     return (
+      <UserContext.Provider value={[user, userDispatch]}> 
       <div>
         <Notification/>
         <h2>blogs</h2>
@@ -199,6 +212,7 @@ const App = () => {
             />
           ))}
       </div>
+      </UserContext.Provider>
     );
   }
 };
