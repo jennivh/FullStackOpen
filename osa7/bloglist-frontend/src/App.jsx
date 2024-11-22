@@ -1,20 +1,18 @@
 import { useState, useEffect, useReducer } from "react";
-import Blog from "./components/Blog";
 import { getAll, setToken, create, update, deleteBlog } from "./services/blogs";
 import loginService from "./services/login";
-import AddBlog from "./components/AddBlog";
-import Togglable from "./components/Togglable";
 import { useNotificationDispatch } from "./components/NotificationContext";
 import Notification from "./components/Notification";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import UserContext from "./UserContext";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Link, } from "react-router-dom";
 import Users from "./components/Users";
 import Blogs from "./components/Blogs";
 import userService from "./services/users";
 import User from "./components/User";
+import BlogPage from "./components/BlogPage";
 
 const userReducer = (state, action) => {
   switch (action.type) {
@@ -149,8 +147,11 @@ const App = () => {
   const submitNewBlog = (newBlog) => {
     console.log("lol");
     newBlogMutation.mutate(newBlog);
-    
   };
+
+  const padding = {
+    paddingRight: 5
+  }
 
   const updateBlogs = (updatedBlog) => {
     console.log(updatedBlog);
@@ -203,40 +204,28 @@ const App = () => {
     );
   } else {
     return (
+     
       <UserContext.Provider value={[user, userDispatch]}> 
       <Router>
-        <Link to="/">blogs</Link>
-        <Link to="/users">users</Link>
-        <Routes>
-          <Route path="/" element={<Blogs/>}></Route>
-          <Route path="/users" element={<Users users={users}/>}></Route>
-          <Route path="/:id"></Route>
-          <Route path="/users/:id" element={<User users={users}/>}></Route>
-        </Routes>
-      </Router>
-      <div>
-        <Notification/>
-        <h2>blogs</h2>
+        <Link to="/" style={padding}>blogs</Link>
+        <Link to="/users" style={padding}>users</Link>
         <div>
           {user.username} logged in
           <button onClick={logOut}>log out</button>
         </div>
-        <Togglable buttonLabel="new blog">
-          <AddBlog submitNewBlog={submitNewBlog} />
-        </Togglable>
-        {blogs
-          .sort((a, b) => b.likes - a.likes)
-          .map((blog) => (
-            <Blog
-              key={blog.id}
-              user={user}
-              blog={blog}
-              updateBlogs={updateBlogs}
-              deleteBlog={deleteBlogFromBlogs}
-            />
-          ))}
+        <Routes>
+          <Route path="/" element={<Blogs blogs={blogs} submitNewBlog={submitNewBlog}/>}></Route>
+          <Route path="/users" element={<Users users={users}/>}></Route>
+          <Route path="/:id" element={<BlogPage blogs={blogs} deleteBlog={deleteBlogFromBlogs} user={user} updateBlogs={updateBlogs}/>}></Route>
+          <Route path="/users/:id" element={<User users={users}/>}></Route>
+        </Routes>
+      
+      <div>
+        <Notification/>
       </div>
+      </Router>
       </UserContext.Provider>
+      
     );
   }
 };
