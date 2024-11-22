@@ -1,13 +1,15 @@
 import { Link } from 'react-router-dom'
+import { Table } from 'react-bootstrap'
 
 const Users = ({users}) => {
   
     return(
         <div>
             <h1>Users</h1>
-            <table>
+            <Table striped>
+                <tbody>
                 <tr>
-                    <td></td>
+                    <th>username</th>
                     <th>blogs created</th>
                 </tr>
                 {users.map(user => (
@@ -16,7 +18,8 @@ const Users = ({users}) => {
                         <td>{user.blogs.length}</td>
                     </tr>
                 ))}
-            </table>
+                </tbody>
+            </Table>
         </div>
 
     )

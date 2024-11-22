@@ -57,9 +57,9 @@ const BlogPage = ({ blogs, updateBlogs, deleteBlog, user  }) => {
           <input type="text" value={comment} onChange={(e) => setComment(e.target.value)}/><button onClick={addCommentToBlog}>add comment</button></form>
           {blog.comments !== undefined &&
             blog.comments.length > 0 ? (
-              <ul>
+              <ul className="list-group list-group-flush">
                 {blog.comments.map((comment, index) => (
-                  <li key={index}>{comment}</li>
+                  <li key={index} className="list-group-item">{comment}</li>
                 ))}
               </ul>
             ) : (

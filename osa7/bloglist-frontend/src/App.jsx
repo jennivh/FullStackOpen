@@ -66,7 +66,7 @@ const App = () => {
       const blogs = queryClient.getQueryData(['blogs'])
       if (blogs) {
         queryClient.setQueryData(['blogs'], [...blogs, newBlog])
-        dispatch({ type: "SET_NOTIFICATION", data: `a new blog ${sentBlog.title} by ${sentBlog.author}` });
+        dispatch({ type: "SET_NOTIFICATION", data: `a new blog ${newBlog.title} by ${newBlog.author}` });
     setTimeout(() => {
       dispatch({ type: "CLEAR_NOTIFICATION" });
     }, 2000);
@@ -171,11 +171,11 @@ const App = () => {
  
 
   if (result.isError) {
-    return <div>blog service not available due to problems in server</div>
+    return <div className="card">blog service not available due to problems in server</div>
   }
 
   if (result.isLoading) {
-    return <div>Loading...</div>
+    return <div className="card">Loading...</div>
   }
 
   if (user === null) {
@@ -219,17 +219,18 @@ const App = () => {
           <button onClick={logOut}>log out</button>
         </div>
         </div>
+        <div>
+        <Notification/>
+      </div>
         <Routes>
           <Route path="/" element={<Blogs blogs={blogs} submitNewBlog={submitNewBlog}/>}></Route>
           <Route path="/users" element={<Users users={users}/>}></Route>
           <Route path="/:id" element={<BlogPage blogs={blogs} deleteBlog={deleteBlogFromBlogs} user={user} updateBlogs={updateBlogs}/>}></Route>
           <Route path="/users/:id" element={<User users={users}/>}></Route>
         </Routes>
+        </Router>
+ 
       
-      <div>
-        <Notification/>
-      </div>
-      </Router>
       </UserContext.Provider>
       
     );

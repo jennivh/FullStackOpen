@@ -12,8 +12,8 @@ const Blog = ({ blog}) => {
   
 
   return (
-    <div data-testid="blog" style={blogStyle}>
-    <Link to={`/${blog.id}`} ><div data-testid="title">{blog.title} {blog.author}</div> </Link>
+    <div data-testid="blog" className="card" style={{width: "30rem", height:"3rem", margin: "0.5rem"}}>
+    <div data-testid="title" className="card-title"><Link to={`/${blog.id}`}>{blog.title} {blog.author}</Link></div> 
     </div>
   );
 };
