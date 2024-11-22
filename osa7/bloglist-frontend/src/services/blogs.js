@@ -19,13 +19,17 @@ export const getAll = async () => {
 };
 
 export const update = async (blog) => {
-  console.log("blog to update: axios", blog);
   const response = await axios.put(`${baseUrl}/${blog.id}`, blog);
   return response.data;
 };
 
+export const addComment = async (id, comment) => {
+  console.log("comment: axios", comment);
+  const response = await axios.post(`${baseUrl}/${id}/comments`, { comment });
+  return response.data;
+};
+
 export const deleteBlog = async (id) => {
-  console.log("delete blog: axios", id);
   const config = {
     headers: { Authorization: token },
   };

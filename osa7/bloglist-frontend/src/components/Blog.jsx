@@ -9,10 +9,11 @@ const Blog = ({ blog}) => {
     marginBottom: 5,
   };
  
+  
 
   return (
     <div data-testid="blog" style={blogStyle}>
-    <Link to={`/${blog.id}`}><div data-testid="title">{blog.title}</div> <div>{blog.author}</div></Link>
+    <Link to={`/${blog.id}`} ><div data-testid="title">{blog.title} {blog.author}</div> </Link>
     </div>
   );
 };

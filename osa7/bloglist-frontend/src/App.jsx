@@ -153,6 +153,10 @@ const App = () => {
     paddingRight: 5
   }
 
+  const navbarstyle = {
+    display: "flex",
+    flexDirection: "row"
+  }
   const updateBlogs = (updatedBlog) => {
     console.log(updatedBlog);
     const blogToSend = {...updatedBlog, likes: updatedBlog.likes + 1};
@@ -207,11 +211,13 @@ const App = () => {
      
       <UserContext.Provider value={[user, userDispatch]}> 
       <Router>
+        <div style={navbarstyle}>
         <Link to="/" style={padding}>blogs</Link>
         <Link to="/users" style={padding}>users</Link>
         <div>
           {user.username} logged in
           <button onClick={logOut}>log out</button>
+        </div>
         </div>
         <Routes>
           <Route path="/" element={<Blogs blogs={blogs} submitNewBlog={submitNewBlog}/>}></Route>
